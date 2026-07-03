@@ -1,0 +1,32 @@
+name: CRLF Check
+
+# This workflow performs a check for CRLF (Carriage Return and Line Feed) line endings in the repository files.
+# The purpose is to ensure consistent line and ending styles across the codebase, which is crucial for cross-platform compatibility.
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-crlf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for CRLF line endings
+        run: |
+          # Find files with CRLF line endings, excluding specified directories
+          # `.git` is excluded by default; note: brace expansion needs several inputs to work
+          CRLF_FILES=$(grep -Ilsr $'\r$' .) || echo "No CRLF line endings found."
+
+          if [ -n "$CRLF_FILES" ]; then
+            echo "CRLF line endings found in the following files:"
+            echo "$CRLF_FILES"
+            exit 1
+          else
+            echo "No CRLF line endings found."
+          fi
+        shell: bash

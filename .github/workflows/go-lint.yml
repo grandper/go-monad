@@ -1,0 +1,27 @@
+name: Golang Lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  golint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.27'
+
+      # golangci-lint must be built with a Go version >= the go.mod version (1.27);
+      # v2.13.1 is the first release built with go1.27.
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.13.1
+          args: ./...
